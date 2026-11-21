@@ -9,7 +9,7 @@ Astro 5 + Cloudflare Workers. Evergreen guides remain static; daily pages, archi
 - D1: `krillion-content`, binding `CONTENT`.
 - Private R2: `krillion-source`, binding `RAW`; original today/reveal responses and published snapshots.
 - `data/dives/*.json`: export / editorial backup, not a second live source.
-- GitHub Actions deploys code on pushes to main. Daily content does not rebuild or deploy the site.
+- GitHub Actions is configured to deploy code on pushes to main, but requires `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` repository secrets. Daily content does not rebuild or deploy the site.
 
 ## Date and publication rules
 
@@ -20,6 +20,14 @@ No 15-minute date offset. Preheat retains the actual current dive. At ET midnigh
 One shared daily record contains exact prompt text, selected answers, aliases, source, fetch/check/publication timestamps, revision/hash and separate endpoint/player verification flags. Polling unchanged data only updates lastCheckedAt, not updatedAt or sitemap lastmod.
 
 ## Scheduled execution
+
+These are not Codex app automations. Collection runs on Cloudflare even when the operator's computer and Codex are closed.
+
+| Feature | Where it runs | Definition / results |
+|---|---|---|
+| Collection and publication | Cloudflare `krillion-sync` scheduled Worker | `workers/sync.ts`, `wrangler.sync.jsonc`; Worker logs and D1 `runs` |
+| Missing-data fallback | Site Worker when a daily page is requested | `src/lib/daily.ts`, `src/middleware.ts`; visible page status |
+| Reset countdown | Visitor's browser, using the server-provided reset timestamp | `src/pages/when-does-krillion-reset.astro`; countdown and saved observations on that page |
 
 Cloudflare cron is `* * * * *` (UTC). Most ticks only decide whether a fetch is due. Runtime time-zone conversion handles US daylight saving automatically; no seasonal cron edits.
 
@@ -63,11 +71,13 @@ The publisher rereads live data, validates date/number/exact prompts, merges hin
 
 ## Email notification activation
 
-Email delivery is prepared but **disabled until recipient and sender setup are complete**.
+**Enabled on 2026-11-21.** The sending domain `krillion.tips` is enabled with configured DNS, the `EMAIL` binding is deployed, and recipient/sender addresses are stored in Cloudflare secrets. The first queued production notification was accepted by the provider at **22:34 Beijing**; actual inbox receipt still needs operator confirmation. Provider acceptance is not proof of inbox delivery or two-day reset acceptance.
+
+To change or reconfigure delivery:
 
 1. Obtain the operator's recipient email; do not infer it from the Cloudflare login.
-2. Verify that destination mailbox in Cloudflare Email Service and complete sending-domain setup for `krillion.tips` (including the DNS requirements shown by Cloudflare). Do not overwrite existing mail DNS blindly.
-3. Enable the commented `send_email: [{name: "EMAIL"}]` binding in `wrangler.sync.jsonc`.
+2. Complete sending-domain setup in Cloudflare Email Service and destination verification if required by the account. Do not overwrite existing mail DNS blindly.
+3. Retain the `send_email: [{name: "EMAIL"}]` binding in `wrangler.sync.jsonc`.
 4. Store addresses through the prompts below, not in Git:
    ```bash
    npx wrangler secret put NOTIFY_TO --config wrangler.sync.jsonc
@@ -106,6 +116,15 @@ The GitHub deploy token needs access to this Worker, its D1 migrations and R2 bi
 - Existing GSC submission points at `https://krillion.tips/sitemap.xml`. The URL remains unchanged; daily revisions do not require daily resubmission.
 
 ## Operational inspection
+
+In the Cloudflare dashboard:
+
+- Compute → Workers and Pages → `krillion-sync` → Settings / Cron Triggers: see the deployed schedule. Observability: see invocations and failures.
+- Storage and Databases → D1 → `krillion-content` → Console: query `runs` for collection outcomes, `observations` for actual reset transitions, `outbox` for notification attempts/receipts, and `revisions` for published content history.
+- Compute → Email Service → Email Sending → `krillion.tips` → Activity log: inspect provider delivery events.
+- `/when-does-krillion-reset/`: public countdown and recorded reset observations, not private operational logs.
+
+Emails report significant changes and failures; they are not the complete execution log. Unchanged hourly checks do not generate mail. Missing mail alone cannot prove the scheduler is healthy; check Worker/D1 logs separately.
 
 ```bash
 WRANGLER_LOG_PATH=/tmp/krillion-wrangler-logs npx wrangler d1 execute krillion-content --remote --command "SELECT at,date,outcome,detail FROM runs ORDER BY id DESC LIMIT 10"

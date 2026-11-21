@@ -7,8 +7,7 @@
   "d1_databases": [{"binding":"CONTENT","database_name":"krillion-content","database_id":"ec658929-0743-44dc-8e61-6897d34ebcd8","migrations_dir":"migrations"}],
   "r2_buckets": [{"binding":"RAW","bucket_name":"krillion-source"}],
   "vars": {"SITE_URL":"https://krillion.tips"},
-  // Enable after the sender domain and recipient mailbox are verified:
-  // "send_email": [{"name":"EMAIL"}],
+  "send_email": [{"name":"EMAIL"}],
   "triggers": {"crons":["* * * * *"]},
   "observability": {"enabled":true}
 }

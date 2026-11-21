@@ -1,0 +1,10 @@
+---
+import { statusText, type Dive } from '../lib/daily';
+interface Props { data: Dive }
+const { data } = Astro.props;
+---
+<p class="notice" data-date={data.date} data-dive={data.dive} data-status={data.status} data-revision={data.revision}>
+  <strong>{data.status.replaceAll('_', ' ')}:</strong> {statusText(data.status)}
+  {data.updatedAt && <> Updated <time datetime={data.updatedAt}>{new Date(data.updatedAt).toLocaleString('en-US', { timeZone: 'America/New_York' })} ET</time>.</>}
+  {' '}<a href="/when-does-krillion-reset/">Next reset</a>: <time datetime={data.resetsAt}>{new Date(data.resetsAt).toLocaleString('en-US', { timeZone: 'America/New_York' })} ET</time>.
+</p>

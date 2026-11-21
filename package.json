@@ -10,9 +10,14 @@
     "deploy": "npm run build && wrangler deploy",
     "deploy:dry": "npm run build && wrangler deploy --dry-run",
     "check": "astro check",
+    "deploy:sync": "wrangler deploy --config wrangler.sync.jsonc",
+    "check:daily": "node --experimental-strip-types scripts/check-daily.ts",
+    "content:export": "node --experimental-strip-types scripts/content.ts export",
+    "content:publish-hints": "node --experimental-strip-types scripts/content.ts publish-hints",
     "verify": "npm run build && wrangler deploy --dry-run"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^12.6.13",
     "astro": "^5.16.0"
   },
   "devDependencies": {

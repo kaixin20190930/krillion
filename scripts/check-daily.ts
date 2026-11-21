@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import { etDate, diveNumber, resetAt } from '../src/lib/daily.ts';
+import { validateToday, normalizeReveal } from '../workers/sync.ts';
+assert.equal(etDate(new Date('2026-11-21T04:59:59Z')), '2026-11-20');
+assert.equal(etDate(new Date('2026-11-21T05:00:00Z')), '2026-11-21');
+assert.equal(diveNumber('2026-07-16'), 1);
+assert.equal(diveNumber('2026-11-21'), 129);
+assert.equal(resetAt('2026-03-07'), '2026-03-08T05:00:00.000Z');
+assert.equal(resetAt('2026-03-08'), '2026-03-09T04:00:00.000Z');
+assert.equal(resetAt('2026-10-31'), '2026-11-01T04:00:00.000Z');
+assert.equal(resetAt('2026-11-01'), '2026-11-02T05:00:00.000Z');
+const today = {date:'2026-11-21',dayNumber:129,resetsAt:resetAt('2026-11-21'),prompts:Array.from({length:7},(_,i)=>({id:`p${i+1}`,text:`Prompt ${i+1}`}))};
+validateToday(today, today.date);
+assert.throws(()=>validateToday({...today,dayNumber:128}, today.date));
+assert.throws(()=>normalizeReveal(today,{date:today.date,prompts:today.prompts.map(p=>({...p,text:'wrong',answers:[]}))},null));
+console.log('Daily date, DST, dive number and mismatch checks passed.');

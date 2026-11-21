@@ -18,7 +18,7 @@ const rows = [
   <Breadcrumbs items={[{label:'Home',href:'/'},{label:'Tiers & scoring'}]} />
   <section class="hero"><div class="shell"><p class="eyebrow">Scoring guide</p><h1>Krillion Tiers and Scoring, Explained</h1><p class="lede">Rarity decides your score. A correct answer is only the start—the fewer players who converge on it, the deeper you sink.</p></div></section>
   <article class="narrow prose">
-    <p class="notice"><strong>Important:</strong> tiers are prompt-specific. The named examples below come from the November 20 official reveal data, while the “Too Clever” row shows typical patterns because that response did not expose a 15-point answer. Do not treat any word as permanently locked to one tier.</p>
+    <p class="notice"><strong>Important:</strong> tiers are prompt-specific. The named examples below were retrieved from the public reveal endpoint for November 20, 2026. The “Too Clever” row describes typical patterns because that response did not expose a 15-point answer. These are not independently player-verified. Do not treat any word as permanently locked to one tier.</p>
     <table>
       <thead><tr><th>Tier</th><th>Points</th><th>Three examples</th><th>What it means</th></tr></thead>
       <tbody>{rows.map((row)=><tr><td><TierPill tier={row.key} /></td><td><strong>{row.score}</strong></td><td>{row.examples.join(' · ')}</td><td>{row.meaning}</td></tr>)}</tbody>

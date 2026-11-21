@@ -1,11 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AnswerCard from '../components/AnswerCard.astro';
-import { latestDay as data } from '../data/answers';
+import { dailyView } from '../lib/daily';
+import DailyStatus from '../components/DailyStatus.astro';
 import { SITE } from '../lib/site';
+export const prerender = false;
+const data = await dailyView(Astro.locals.runtime.env);
 
-const title = 'Krillion Answers Today & Unlimited Guide | Krillion Tips';
-const description = 'Krillion answers sourced from the official reveal data, plus daily hints, scoring tiers, Unlimited strategy, 1v1 rules, and an answer archive.';
+const title = 'Krillion Tips: Answers, Hints, Tiers & Unlimited Guide';
+const description = 'Independent Krillion tips, daily prompts and answer examples from the public game endpoint, hints, scoring tiers, Unlimited strategy, and an archive.';
 const jsonLd = [
   { '@context': 'https://schema.org', '@type': 'WebSite', name: SITE.name, url: SITE.url, description },
   {
@@ -24,8 +27,8 @@ const routes = [
     <div class="shell hero-grid">
       <div>
         <p class="eyebrow">Updated for Dive #{data.dayNumber} · {data.displayDate}</p>
-        <h1>Krillion Answers Today &amp; Unlimited Guide</h1>
-        <p class="lede">Seven daily prompts, tiered examples selected from Krillion’s official reveal data, and practical strategy for Daily, Unlimited, and 1v1.</p>
+        <h1>Krillion Tips: Answers, Hints, Tiers &amp; Unlimited Guide</h1>
+        <p class="lede">Seven daily prompts, answer examples retrieved from Krillion’s public reveal endpoint, and practical strategy for Daily, Unlimited, and 1v1.</p>
         <div class="actions">
           <a class="button" href="/krillion-answers-today/">See today’s answers</a>
           <a class="button secondary" href="/krillion-hints/">Hints, no spoilers</a>
@@ -45,8 +48,9 @@ const routes = [
     <div class="shell">
       <div class="section-head">
         <div><p class="eyebrow">Today’s first look</p><h2>Seven prompts. One smart dive.</h2></div>
-        <p>These are representative examples selected from the official reveal data—not an exhaustive answer dump. Use the top picks before the next reset.</p>
+        <p>These are representative examples from the public game endpoint, not the entire answer database. This is an independent, unofficial guide.</p>
       </div>
+      <DailyStatus {data} />
       <div class="answer-list">
         {data.prompts.slice(0, 2).map((prompt, index) => <AnswerCard {prompt} {index} heading="h3" />)}
       </div>

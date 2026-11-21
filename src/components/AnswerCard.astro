@@ -1,6 +1,6 @@
 ---
 import TierPill from './TierPill.astro';
-interface Answer { tier: string; answer: string; score: number }
+interface Answer { tier: string; answer: string; score: number; aliases?: string[] }
 interface Prompt { text: string; hint: string; answers: Answer[] }
 interface Props { prompt: Prompt; index: number; heading?: 'h2' | 'h3'; reveal?: boolean }
 const { prompt, index, heading = 'h2', reveal = true } = Astro.props;
@@ -10,7 +10,7 @@ const Heading = heading;
   <div class="answer-card__top">
     <span class="prompt-num">{index + 1}</span>
     <div><p class="card-kicker">Prompt {index + 1}</p><Heading>{prompt.text}</Heading></div>
-    <TierPill tier="krillion" short />
+    {reveal && prompt.answers.some(a => a.tier === 'krillion') && <TierPill tier="krillion" short />}
   </div>
   <p class="hint">{prompt.hint}</p>
   {reveal ? (
@@ -20,8 +20,10 @@ const Heading = heading;
           <small>{answer.tier === 'krillion' ? 'Top pick' : answer.tier}</small>
           <strong>{answer.answer}</strong>
           <span class="points">{answer.score} points</span>
+          {answer.aliases?.length ? <small>Also: {answer.aliases.join(', ')}</small> : null}
         </div>
       ))}
     </div>
   ) : <p class="hint"><a href="/krillion-answers-today/">Reveal today’s tiered answers</a></p>}
+  {reveal && !prompt.answers.length && <p class="hint">Answer examples are being collected for this prompt.</p>}
 </article>

@@ -2,13 +2,16 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import AnswerCard from '../components/AnswerCard.astro';
-import { latestDay as data } from '../data/answers';
+import { dailyView } from '../lib/daily';
+import DailyStatus from '../components/DailyStatus.astro';
+export const prerender = false;
+const data = await dailyView(Astro.locals.runtime.env);
 const title = `Krillion Hints for Today – ${data.displayDate}`;
 const description = `Spoiler-free Krillion hints for all seven prompts on ${data.displayDate}, plus a simple method for turning each clue into a stronger answer.`;
 ---
 <BaseLayout {title} {description}>
   <Breadcrumbs items={[{label:'Home',href:'/'},{label:'Hints today'}]} />
-  <section class="hero"><div class="shell"><p class="eyebrow">Spoiler-light · Dive #{data.dayNumber}</p><h1>Krillion Hints for Today</h1><p class="lede">A useful direction for every prompt, without exposing the accepted answer list.</p><div class="actions"><a class="button" href="#hints">Show hints</a><a class="button secondary" href="/krillion-answers-today/">Reveal answers instead</a></div></div></section>
+  <section class="hero"><div class="shell"><p class="eyebrow">Spoiler-light · Dive #{data.dayNumber}</p><h1>Krillion Hints Today – {data.displayDate}</h1><p class="lede">Start with the exact prompt and a category-fit method, without exposing the answer list. Tailored hints are added when prepared.</p><DailyStatus {data} /><div class="actions"><a class="button" href="#hints">Show hints</a><a class="button secondary" href="/krillion-answers-today/">Reveal answers instead</a></div></div></section>
   <section class="section" id="hints"><div class="shell answer-list">{data.prompts.map((prompt,index)=><AnswerCard {prompt} {index} reveal={false} />)}</div></section>
   <section class="section"><div class="narrow prose">
     <h2>How to use today’s Krillion hints</h2>
@@ -16,7 +19,7 @@ const description = `Spoiler-free Krillion hints for all seven prompts on ${data
     <h2>Three steps from hint to answer</h2>
     <ol><li><strong>List the obvious answer.</strong> This establishes the Plankton choice you are trying to improve.</li><li><strong>Apply the hint’s direction.</strong> Search one narrower branch of the category instead of scanning everything you know.</li><li><strong>Submit the best credible option.</strong> If the rare idea has uncertain spelling or category fit, use the safer answer before time expires.</li></ol>
     <h2>When to reveal the answers</h2>
-    <p>Switch to the <a href="/krillion-answers-today/">answers page</a> after you have played, when you are studying tier patterns, or when a prompt has completely blocked you. The listed examples come from the official reveal data for this dive, but they are representative selections rather than the complete accepted-answer database.</p>
+    <p>Switch to the <a href="/krillion-answers-today/">answers page</a> after you have played, when studying tiers, or when a prompt has blocked you. Examples are retrieved from the game’s public reveal endpoint for this date. They are representative selections, not the complete answer database or a claim of player verification.</p>
     <h2>Why a hint cannot guarantee a tier</h2>
     <p>Krillion tiers depend on the prompt and the answer data. A clue can guide you toward less obvious territory, but it cannot promise that every answer in that territory is Rare or Deep Cut. Always satisfy the exact wording first; rarity only matters after the answer is valid.</p>
   </div></section>

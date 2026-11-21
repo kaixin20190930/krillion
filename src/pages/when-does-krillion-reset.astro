@@ -1,0 +1,43 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { dailyView } from '../lib/daily';
+export const prerender = false;
+const env = Astro.locals.runtime.env;
+const data = await dailyView(env);
+const now = Date.now();
+const { results: observations } = await env.CONTENT.prepare('SELECT date,dive,first_seen,prior_seen,scheduled_reset FROM observations ORDER BY date DESC LIMIT 3').all<{date:string;dive:number;first_seen:string;prior_seen:string|null;scheduled_reset:string}>();
+const title = 'When Does Krillion Reset? Time Zones & Countdown';
+const description = 'Krillion’s daily reset is scheduled for midnight America/New_York. See the next reset in Eastern, Pacific, London and Beijing time, plus observed changes.';
+const zones = [['Eastern Time','America/New_York'],['Pacific Time','America/Los_Angeles'],['London','Europe/London'],['Beijing','Asia/Shanghai']];
+const format = (value:string,zone:string) => new Intl.DateTimeFormat('en-US',{timeZone:zone,dateStyle:'medium',timeStyle:'long'}).format(new Date(value));
+---
+<BaseLayout {title} {description}>
+  <section class="hero"><div class="narrow"><p class="eyebrow">Official schedule vs observed update</p><h1>When Does Krillion Reset?</h1><p class="lede">The game schedules its next daily dive for midnight in <strong>America/New_York</strong>, not midnight UTC. The public today endpoint supplies the next reset timestamp. Our monitor records when the new date and dive number actually become visible.</p><p class="notice">Next reset: <time datetime={data.resetsAt}>{format(data.resetsAt,'America/New_York')}</time>. Countdown: <strong id="reset-countdown" data-reset={data.resetsAt} data-server-now={now}>calculating…</strong></p></div></section>
+  <section class="section"><div class="narrow prose">
+    <h2>Next Krillion reset in your time zone</h2>
+    <div class="table-wrap"><table><thead><tr><th>Location</th><th>Next scheduled reset</th></tr></thead><tbody>{zones.map(([label,zone])=><tr><td>{label}</td><td>{format(data.resetsAt,zone)}</td></tr>)}</tbody></table></div>
+    <p>Eastern standard time corresponds to 05:00 UTC and 13:00 Beijing. Eastern daylight time corresponds to 04:00 UTC and 12:00 Beijing. London also changes its clocks on different dates; the table uses the time-zone database for the actual next reset.</p>
+    <h2>How we update today’s guide</h2>
+    <p>Fifteen minutes before the scheduled reset, we preheat the check but keep the current dive. From five minutes before until fifteen minutes after reset, the monitor checks every minute. We aim to publish the new prompts and available examples within five minutes of reset, subject to the public endpoints becoming available. If data is late, the page shows a pending or partial state, never yesterday’s answers under today’s date.</p>
+    <h2>Observed reset changes</h2>
+    <p>The official timestamp is a schedule, not proof of the exact observed transition. A complete observation needs a last check of the previous date and a first check of the new date. Two real reset windows are required to calibrate the publishing schedule.</p>
+    <div class="table-wrap"><table><thead><tr><th>Dive date</th><th>Last prior-date observation (UTC)</th><th>First new-date observation (UTC)</th></tr></thead><tbody>{observations.map(o=><tr><td>{o.date} · #{o.dive}</td><td>{o.prior_seen ?? 'Baseline only; not observed'}</td><td>{o.first_seen}</td></tr>)}</tbody></table></div>
+    {!observations.length && <p>No observed transition has been recorded yet.</p>}
+    <h2>Why the timer and answers may differ briefly</h2>
+    <p>The reset can arrive before the reveal response is complete. Our page identifies its date, dive number, publication status and last content update. A successful background check does not change the content’s update time, and endpoint-backed examples are not labeled player-verified.</p>
+    <p><a href="/krillion-answers-today/">Today’s dive and publication status</a> · <a href="/krillion-archive/">Published dive archive</a></p>
+  </div></section>
+</BaseLayout>
+<script>
+  const element = document.getElementById('reset-countdown');
+  if (element) {
+    const target = Date.parse(element.dataset.reset!);
+    const initial = Number(element.dataset.serverNow);
+    const begun = performance.now();
+    const update = () => {
+      const remaining = Math.max(0, Math.ceil((target - initial - (performance.now() - begun)) / 1000));
+      element.textContent = remaining ? `${Math.floor(remaining / 3600)}h ${Math.floor(remaining % 3600 / 60)}m ${remaining % 60}s` : 'Reset window reached — refresh for the new dive.';
+    };
+    update(); setInterval(update, 1000);
+  }
+</script>

@@ -2,18 +2,24 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import AnswerCard from '../../components/AnswerCard.astro';
-import { answerDays } from '../../data/answers';
-
-export function getStaticPaths() {
-  return answerDays.map((day) => ({ params: { date: day.date }, props: { day } }));
-}
-
-const { day } = Astro.props;
-const title = `Krillion Answers for ${day.displayDate} – Dive #${day.dayNumber}`;
-const description = `Krillion prompts and verified tiered answer examples for ${day.displayDate}, Dive #${day.dayNumber}.`;
+import DailyStatus from '../../components/DailyStatus.astro';
+import { getDive, listDives, displayDate, civilTime } from '../../lib/daily';
+export const prerender = false;
+const key = Astro.params.date ?? '';
+const isMonth = /^\d{4}-\d{2}$/.test(key);
+let valid = false;
+try { civilTime(isMonth ? `${key}-01` : key); valid = true; } catch {}
+const day = valid && !isMonth ? await getDive(Astro.locals.runtime.env, key) : null;
+const days = valid && isMonth ? (await listDives(Astro.locals.runtime.env)).filter(d => d.date.startsWith(`${key}-`)) : [];
+const found = Boolean(day || days.length);
+if (!found) Astro.response.status = 404;
+const label = day ? displayDate(day.date) : found ? new Intl.DateTimeFormat('en-US', {timeZone:'UTC',month:'long',year:'numeric'}).format(new Date(`${key}-01T00:00:00Z`)) : 'Page not found';
+const title = day ? `Krillion Answers for ${label} – Dive #${day.dive}` : found ? `Krillion ${label} Dive Archive` : 'Page Not Found | Krillion Tips';
+const description = day ? `Published prompts and available answer examples for ${label}, Dive #${day.dive}. Independent guide; source and update status are shown.` : `Browse published Krillion dives for ${label}.`;
 ---
-<BaseLayout {title} {description} type="article">
-  <Breadcrumbs items={[{label:'Home',href:'/'},{label:'Archive',href:'/krillion-archive/'},{label:day.displayDate}]} />
-  <section class="hero"><div class="shell"><p class="eyebrow">Archive · Dive #{day.dayNumber}</p><h1>Krillion Answers – {day.displayDate}</h1><p class="lede">The seven prompts and representative accepted answers from this daily dive.</p><div class="actions"><a class="button" href="/krillion-answers-today/">Go to today</a><a class="button secondary" href="/krillion-archive/">All archive dates</a></div></div></section>
-  <section class="section"><div class="shell answer-list">{day.prompts.map((prompt:any,index:number)=><AnswerCard {prompt} {index} />)}</div></section>
+<BaseLayout {title} {description} type={day ? 'article' : 'website'} noindex={!found}>
+  <Breadcrumbs items={[{label:'Home',href:'/'},{label:'Archive',href:'/krillion-archive/'},{label}]} />
+  <section class="hero"><div class="shell"><p class="eyebrow">{day ? `Archive · Dive #${day.dive}` : found ? 'Monthly archive' : '404'}</p><h1>{day ? `Krillion Answers for ${label}` : found ? `Krillion ${label} Dive Archive` : 'This dive has not been published.'}</h1><p class="lede">{found ? 'Only saved prompts and available examples are shown. This is an unofficial guide.' : 'No answers have been invented for this address.'}</p><div class="actions"><a class="button" href="/krillion-answers-today/">Go to today</a><a class="button secondary" href="/krillion-archive/">All archive dates</a></div></div></section>
+  {day && <section class="section"><div class="shell"><DailyStatus data={day} /><div class="answer-list">{day.prompts.map((prompt,index)=><AnswerCard {prompt} {index} />)}</div></div></section>}
+  {isMonth && <section class="section"><div class="shell archive-list">{days.map(d=><a class="card card-link archive-link" href={`/krillion-archive/${d.date}/`}><time datetime={d.date}>{displayDate(d.date)}</time><div><h3>Dive #{d.dive}</h3><p>{d.prompts.slice(0,2).map(p=>p.text).join(' · ')}</p></div><strong>View answers</strong></a>)}</div></section>}
 </BaseLayout>

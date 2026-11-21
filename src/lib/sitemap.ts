@@ -1,4 +1,4 @@
-import { answerDays, latestDay } from '../data/answers';
+import { listDives, type SiteEnv } from './daily';
 
 const SITE_URL = 'https://krillion.tips';
 const STATIC_CONTENT_UPDATED = '2026-11-21';
@@ -14,22 +14,23 @@ const staticEntries: SitemapEntry[] = [
   { path: '/how-to-play/', lastmod: STATIC_CONTENT_UPDATED },
   { path: '/krillion-1v1/', lastmod: STATIC_CONTENT_UPDATED },
   { path: '/krillion-answers-today/', lastmod: STATIC_CONTENT_UPDATED },
-  { path: '/krillion-archive/', lastmod: latestDay.date },
+  { path: '/krillion-archive/', lastmod: STATIC_CONTENT_UPDATED },
   { path: '/krillion-hints/', lastmod: STATIC_CONTENT_UPDATED },
   { path: '/krillion-tiers/', lastmod: STATIC_CONTENT_UPDATED },
   { path: '/krillion-unlimited/', lastmod: STATIC_CONTENT_UPDATED },
+  { path: '/when-does-krillion-reset/', lastmod: STATIC_CONTENT_UPDATED },
 ];
 
-const archiveEntries: SitemapEntry[] = answerDays.map((day) => ({
+const archiveEntriesFor = (answerDays: Awaited<ReturnType<typeof listDives>>): SitemapEntry[] => answerDays.map((day) => ({
   path: `/krillion-archive/${day.date}/`,
-  lastmod: day.date,
+  lastmod: day.updatedAt,
 }));
 
-const monthEntries: SitemapEntry[] = Array.from(
+const monthEntriesFor = (answerDays: Awaited<ReturnType<typeof listDives>>): SitemapEntry[] => Array.from(
   new Set(answerDays.map((day) => day.date.slice(0, 7))),
 ).map((month) => ({
   path: `/krillion-archive/${month}/`,
-  lastmod: answerDays.find((day) => day.date.startsWith(month))?.date,
+  lastmod: answerDays.filter(day=>day.date.startsWith(month)).reduce((max,day)=>day.updatedAt>max?day.updatedAt:max,STATIC_CONTENT_UPDATED),
 }));
 
 const escapeXml = (value: string) =>
@@ -40,8 +41,11 @@ const escapeXml = (value: string) =>
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&apos;');
 
-export function buildSitemapXml() {
-  const entries = [...staticEntries, ...monthEntries, ...archiveEntries];
+export async function buildSitemapXml(env: SiteEnv) {
+  const answerDays = await listDives(env);
+  const updated = answerDays.reduce((max,day)=>day.updatedAt>max?day.updatedAt:max,STATIC_CONTENT_UPDATED);
+  const dynamic = new Set(['/', '/krillion-answers-today/', '/krillion-hints/', '/krillion-archive/']);
+  const entries = [...staticEntries.map(entry=>dynamic.has(entry.path)?{...entry,lastmod:updated}:entry), ...monthEntriesFor(answerDays), ...archiveEntriesFor(answerDays)];
   const urls = entries
     .map(({ path, lastmod }) => {
       const loc = `<loc>${escapeXml(new URL(path, SITE_URL).href)}</loc>`;

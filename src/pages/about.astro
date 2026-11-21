@@ -2,13 +2,13 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 const title = 'About Krillion Tips – Independent Daily Game Guide';
-const description = 'Krillion Tips is an independent fan guide providing verified daily answers, spoiler-light hints, rules, and strategy.';
+const description = 'Krillion Tips is an independent fan guide with daily prompt and answer examples from the public game endpoint, spoiler-light hints, rules, and strategy.';
 ---
 <BaseLayout {title} {description}>
   <Breadcrumbs items={[{label:'Home',href:'/'},{label:'About'}]} />
   <section class="hero"><div class="shell"><p class="eyebrow">Independent fan resource</p><h1>About Krillion Tips</h1><p class="lede">We make the daily dive easier to understand, without pretending to be the game or its creators.</p></div></section>
   <article class="narrow prose">
-    <h2>What we publish</h2><p>Krillion Tips publishes verified daily prompts with representative scoring examples, spoiler-light hints, and evergreen guides for scoring, Unlimited, 1v1, and new players.</p>
+    <h2>What we publish</h2><p>Krillion Tips publishes daily prompts and representative scoring examples retrieved from the game’s public endpoints, spoiler-light hints, and evergreen guides for scoring, Unlimited, 1v1, and new players. Endpoint consistency is not the same as independent player verification. We do not claim affiliation with the game.</p>
     <h2>Verification policy</h2><p>Daily pages are timestamped and built from answers checked against the current game data. We show representative examples instead of mirroring the entire answer database. If the game changes an answer after publication, the current game is authoritative.</p>
     <h2>Not the official Krillion site</h2><p>Krillion Tips is an unofficial, independent fan site. It is not affiliated with, sponsored by, or endorsed by Krillion or its creators. We do not use the official logo or claim ownership of the Krillion name.</p>
   </article>

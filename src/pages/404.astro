@@ -1,0 +1,8 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+const title = 'Page Not Found | Krillion Tips';
+const description = 'The requested Krillion Tips page could not be found.';
+---
+<BaseLayout {title} {description} noindex>
+  <section class="hero"><div class="narrow"><p class="eyebrow">404 · Lost at sea</p><h1>This dive went off course.</h1><p class="lede">The page may have moved or never existed. Head back to today’s verified answers.</p><div class="actions"><a class="button" href="/krillion-answers-today/">Today’s answers</a><a class="button secondary" href="/">Back home</a></div></div></section>
+</BaseLayout>

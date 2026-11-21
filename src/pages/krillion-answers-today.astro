@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import AnswerCard from '../components/AnswerCard.astro';
+import { latestDay as data } from '../data/answers';
+import { SITE } from '../lib/site';
+
+const title = `Krillion Answers Today – ${data.displayDate}`;
+const description = `All 7 Krillion answers today for ${data.displayDate}, with examples selected from the official reveal data for each scoring tier.`;
+const faq = [
+  { q: 'What are the Krillion answers today?', a: `Today’s seven prompts and representative answers are listed above for Dive #${data.dayNumber}. Each example is selected from Krillion’s official reveal data for this date.` },
+  { q: 'When does Krillion reset?', a: 'The daily dive currently resets at midnight Eastern Time, which is 05:00 UTC during standard time.' },
+  { q: 'How many Krillion prompts are there each day?', a: 'The daily game has seven prompts.' },
+  { q: 'What is the highest Krillion tier?', a: 'One in a Krillion is the top tier and scores 100 points.' },
+  { q: 'Are these every accepted answer?', a: 'No. This guide selects a useful example from the official reveal data for each major scoring tier instead of reproducing the entire answer database.' },
+];
+const jsonLd = [
+  { '@context': 'https://schema.org', '@type': 'Article', headline: title, description, datePublished: data.date, dateModified: data.verifiedAt, mainEntityOfPage: `${SITE.url}/krillion-answers-today/`, author: { '@type': 'Organization', name: SITE.name }, publisher: { '@type': 'Organization', name: SITE.name } },
+  { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faq.map((item) => ({ '@type': 'Question', name: item.q, acceptedAnswer: { '@type': 'Answer', text: item.a } })) },
+];
+---
+<BaseLayout {title} {description} type="article" {jsonLd}>
+  <Breadcrumbs items={[{label:'Home', href:'/'},{label:'Answers today'}]} />
+  <section class="hero">
+    <div class="shell">
+      <p class="eyebrow">Official reveal data · Dive #{data.dayNumber} · Updated today</p>
+      <h1>Krillion Answers Today – {data.displayDate}</h1>
+      <p class="lede">Use the 100-point picks for maximum depth or choose a safer tier. Every example below is selected from Krillion’s official reveal data for this dive.</p>
+      <div class="actions"><a class="button" href={SITE.officialGameUrl} target="_blank" rel="noopener noreferrer nofollow">Play today’s dive</a><a class="button secondary" href="/krillion-hints/">Switch to hints</a></div>
+    </div>
+  </section>
+  <section class="section">
+    <div class="shell">
+      <p class="notice"><strong>Spoiler warning:</strong> all seven prompts and representative accepted answers are visible below. Krillion may adjust its data; this page reflects the official reveal response retrieved on {data.displayDate}.</p>
+      <div class="answer-list" style="margin-top:24px">
+        {data.prompts.map((prompt, index) => <AnswerCard {prompt} {index} />)}
+      </div>
+    </div>
+  </section>
+  <section class="section">
+    <div class="narrow prose">
+      <h2>Krillion daily answers FAQ</h2>
+      {faq.map((item) => <><h3>{item.q}</h3><p>{item.a}</p></>)}
+      <p>Want yesterday’s set? Browse the <a href="/krillion-archive/">Krillion answer archive</a>. Want to stay spoiler-free? Use <a href="/krillion-hints/">today’s hints</a>.</p>
+    </div>
+  </section>
+</BaseLayout>

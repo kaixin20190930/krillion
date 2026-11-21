@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "krillion-tips",
+  "compatibility_date": "2026-11-20",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  },
+  "workers_dev": true,
+  "routes": [
+    {
+      "pattern": "krillion.tips",
+      "custom_domain": true
+    },
+    {
+      "pattern": "www.krillion.tips",
+      "custom_domain": true
+    }
+  ]
+}

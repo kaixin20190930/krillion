@@ -1,0 +1,7 @@
+---
+import { tiers, type TierKey } from '../lib/site';
+interface Props { tier: TierKey; short?: boolean }
+const { tier, short = false } = Astro.props;
+const item = tiers[tier];
+---
+<span class={`tier tier--${tier}`}>{short ? item.label.replace('One in a ', '') : item.label}</span>

@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import AnswerCard from '../../components/AnswerCard.astro';
+import { answerDays } from '../../data/answers';
+
+export function getStaticPaths() {
+  return answerDays.map((day) => ({ params: { date: day.date }, props: { day } }));
+}
+
+const { day } = Astro.props;
+const title = `Krillion Answers for ${day.displayDate} – Dive #${day.dayNumber}`;
+const description = `Krillion prompts and verified tiered answer examples for ${day.displayDate}, Dive #${day.dayNumber}.`;
+---
+<BaseLayout {title} {description} type="article">
+  <Breadcrumbs items={[{label:'Home',href:'/'},{label:'Archive',href:'/krillion-archive/'},{label:day.displayDate}]} />
+  <section class="hero"><div class="shell"><p class="eyebrow">Archive · Dive #{day.dayNumber}</p><h1>Krillion Answers – {day.displayDate}</h1><p class="lede">The seven prompts and representative accepted answers from this daily dive.</p><div class="actions"><a class="button" href="/krillion-answers-today/">Go to today</a><a class="button secondary" href="/krillion-archive/">All archive dates</a></div></div></section>
+  <section class="section"><div class="shell answer-list">{day.prompts.map((prompt:any,index:number)=><AnswerCard {prompt} {index} />)}</div></section>
+</BaseLayout>

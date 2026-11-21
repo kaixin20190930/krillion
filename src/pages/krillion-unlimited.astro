@@ -1,0 +1,98 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { SITE } from '../lib/site';
+
+const title = 'Krillion Unlimited – Endless Mode Rules and Tips';
+const description = 'A complete Krillion Unlimited strategy guide covering all three oxygen tanks, the 25-second timer, Rare and Deep Cut answers, common mistakes, and FAQs.';
+const faq = [
+  { q: 'How many oxygen tanks do you get in Krillion Unlimited?', a: 'You begin an Unlimited run with three oxygen tanks. They are identical game resources, but assigning each one a strategic role helps prevent careless losses.' },
+  { q: 'How long do you have for each Unlimited prompt?', a: 'Each prompt uses a 25-second timer. A practical plan is to understand the category in the first four seconds, search memory until about 12 seconds, validate spelling, and submit before the final three seconds.' },
+  { q: 'Should I always try for a One in a Krillion answer?', a: 'No. A credible Rare or Schooler answer is usually better than a fragile 100-point guess that costs a tank. High scores come from sustained depth across many rounds.' },
+  { q: 'What is the best target tier in Unlimited?', a: 'Rare is the most efficient default target for many players. It offers meaningful depth without requiring extremely obscure facts or uncertain spelling on every prompt.' },
+  { q: 'When should I use a safe answer?', a: 'Use a safe answer when you have not found a credible uncommon option by the middle of the timer, when spelling is uncertain, or when only one oxygen tank remains.' },
+  { q: 'How do I practice for Krillion Unlimited?', a: 'Build small category benches: several countries, films, songs, colors, breeds, characters, and awards that are valid but not the first examples most people remember.' },
+];
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map((item) => ({
+    '@type': 'Question',
+    name: item.q,
+    acceptedAnswer: { '@type': 'Answer', text: item.a },
+  })),
+};
+---
+<BaseLayout {title} {description} {jsonLd}>
+  <Breadcrumbs items={[{label:'Home',href:'/'},{label:'Krillion Unlimited'}]} />
+  <section class="hero">
+    <div class="shell">
+      <p class="eyebrow">Endless mode strategy</p>
+      <h1>Krillion Unlimited – Endless Mode Rules and Tips</h1>
+      <p class="lede">Unlimited keeps feeding you prompts until the run ends. The real skill is not knowing everything—it is managing three oxygen tanks, a 25-second timer, and the temptation to chase a perfect answer on every round.</p>
+      <div class="actions"><a class="button" href={`${SITE.officialGameUrl}unlimited/classic`} target="_blank" rel="noopener noreferrer nofollow">Play Unlimited</a><a class="button secondary" href="/krillion-tiers/">Learn scoring tiers</a></div>
+    </div>
+  </section>
+
+  <article class="narrow prose">
+    <h2>How Krillion Unlimited works</h2>
+    <p>Krillion Unlimited uses the same rarity-first idea as the daily dive, but removes the seven-prompt finish line. A correct answer keeps the run moving; a rarer accepted answer earns more depth. Instead of planning for a fixed set, you must make repeatable decisions for as long as possible. That changes the optimal strategy. One spectacular 100-point answer is useful, but it does not rescue a run filled with timeouts, misspellings, or guesses that the answer set does not accept.</p>
+    <p>You start with three oxygen tanks and face a 25-second clock on every prompt. The tanks are not three different power-ups—they are identical chances to survive a failed round. It is still helpful to give each tank a job in your own plan. That mental budget stops the first easy-looking prompt from consuming the same resource you may desperately need twenty rounds later.</p>
+
+    <div class="grid two">
+      <div class="card"><p class="card-kicker">Resource</p><h3>Three oxygen tanks</h3><p>Think of them as an early-run correction, a mid-run protection, and a final reserve. The game does not label them this way; the roles are a discipline for managing risk.</p></div>
+      <div class="card"><p class="card-kicker">Pressure</p><h3>25 seconds per prompt</h3><p>Use the opening seconds to understand the category, the middle to retrieve and validate an uncommon answer, and the final seconds to submit safely.</p></div>
+    </div>
+
+    <h2>How to use each of the three oxygen tanks</h2>
+    <h3>Tank one: protect the run from an honest early mistake</h3>
+    <p>The first tank should cover a genuine misunderstanding, an unexpected acceptance rule, or a spelling error—not a casual gamble. Early rounds are where players often overestimate how well they understand the category. If the prompt says a country “with the letter P,” for example, read the whole condition before typing the first country that begins with P. Losing a tank because you misread a qualifier is different from deliberately testing an answer you suspect is invalid.</p>
+
+    <h3>Tank two: spend it only when the upside is real</h3>
+    <p>Once the run has momentum, the second tank becomes a calculated-risk budget. Use it when you have a specific uncommon answer and one narrow uncertainty: perhaps the title includes punctuation, the accepted spelling has two versions, or you are unsure whether a work meets the date cutoff. Do not spend it on a blank-memory guess. A calculated risk has a reason it might score well; a random guess merely has a reason it might fail.</p>
+
+    <h3>Tank three: treat it as a reserve, not available inventory</h3>
+    <p>With one tank left, change your target from maximum rarity to maximum survival. Favor clean spelling, obvious category fit, and answers you can submit several seconds before the deadline. The final tank is valuable because it lets you recover from one unavoidable bad category. If you burn it while chasing a Deep Cut in a category you barely know, the next simple typo ends the run.</p>
+
+    <h2>A reliable 25-second time plan</h2>
+    <ol>
+      <li><strong>0–4 seconds: parse the condition.</strong> Identify the noun, qualifiers, date limits, vote thresholds, letter rules, and whether aliases are likely to count.</li>
+      <li><strong>4–12 seconds: search your memory bench.</strong> Reject the most famous answer, then test two or three less-obvious candidates you already know.</li>
+      <li><strong>12–18 seconds: validate one candidate.</strong> Check category fit, spelling, punctuation, and whether you are confusing a person, title, franchise, or adaptation.</li>
+      <li><strong>18–22 seconds: commit.</strong> Type the strongest credible option. Do not restart the search because a more exotic idea appears at the last moment.</li>
+      <li><strong>22–25 seconds: keep a submission buffer.</strong> The final seconds are for correcting a typo and confirming the entry, not composing the answer from scratch.</li>
+    </ol>
+    <p>This plan is intentionally conservative. A timeout scores nothing useful and may cost oxygen, while a Schooler answer keeps the run alive. As your category knowledge improves, the search stage becomes faster and you can spend more of the clock validating a Rare or Deep Cut candidate.</p>
+
+    <h2>How to find Rare and Deep Cut answers</h2>
+    <p>A Rare answer is usually uncommon but still easy to recognize and spell. A Deep Cut often comes from a regional list, an older catalog, a supporting branch of a franchise, or a specialist category. The key is to move sideways within the category rather than simply choosing a longer or stranger word.</p>
+    <p>Build category benches before you play. For countries, remember examples from different regions and official names. For films, keep a few older titles and international releases. For music, learn album tracks instead of only lead singles. For dog breeds, mix working, guardian, and regional breeds. For animation, remember protagonists outside the largest English-language franchises. A bench of three reliable alternatives is more useful than one impossibly obscure fact you may not retrieve under pressure.</p>
+    <p>Also remember that rarity is prompt-specific and data-dependent. An answer that feels obscure can become “Too Clever” if many players make the same trivia-fan pivot. Do not memorize a permanent tier label for a word. Memorize valid answers, then choose among them based on the exact wording and how likely other players are to reach the same idea.</p>
+
+    <h2>Build a category bench that works under pressure</h2>
+    <p>A category bench is a short list you can retrieve without searching. Keep it small enough to remember and varied enough to avoid the crowd. For geography, choose one familiar country, one official long-form name, and one less-discussed island or regional example. For movies, mix one classic, one international title, and one older genre film. For music, keep album tracks from artists who appear repeatedly rather than memorizing only singles. The point is not to build an encyclopedia. It is to have a second and third answer available after the obvious choice appears.</p>
+    <p>Review the daily reveal data after you play and record patterns, not just top answers. Ask why a candidate landed in Rare instead of Deep Cut. Was it widely known, easy to spell, or the first alternative many players considered? Then add only the examples you genuinely recognize. A copied list is difficult to retrieve under a timer; a compact bench connected to your own memory is much faster.</p>
+    <p>Practice by giving yourself ten seconds per category. Say the obvious answer first, then two alternatives. If the third answer requires a web search or a long explanation, it is not yet part of your usable bench. Repeat the exercise until the alternatives arrive automatically. That speed creates time for validation during a real run.</p>
+
+    <h2>How to recover after losing an oxygen tank</h2>
+    <p>One lost tank should change the next decision, not the entire mood of the run. Take the next prompt from the beginning and reduce risk for one or two rounds. Submit a clean Schooler or Rare answer early, rebuild rhythm, and then return to normal targeting. Players often lose a second tank because the first miss makes them rush, overcorrect, or chase a dramatic score immediately.</p>
+    <p>Identify the cause while it is fresh. A misread condition calls for slower parsing. A typo calls for a larger submission buffer. An invalid fringe answer calls for stricter category validation. A timeout calls for committing earlier. Each cause has a specific correction; “be more careful” is too vague to improve the next round.</p>
+
+    <h2>Ten common Krillion Unlimited mistakes</h2>
+    <ol>
+      <li><strong>Chasing 100 points every round.</strong> A long run of Rare answers usually beats repeated all-or-nothing attempts.</li>
+      <li><strong>Reading only the category noun.</strong> Qualifiers such as dates, letters, weights, or vote counts decide whether an answer is valid.</li>
+      <li><strong>Using the first famous example automatically.</strong> Pause long enough to search for one credible alternative.</li>
+      <li><strong>Rejecting a safe answer too late.</strong> If the uncommon option has not appeared by the middle of the timer, prepare the safe submission.</li>
+      <li><strong>Typing fragile punctuation from memory.</strong> Prefer an accepted alias or a title you can spell confidently when the timer is low.</li>
+      <li><strong>Confusing obscurity with validity.</strong> A niche answer still has to satisfy every condition in the prompt.</li>
+      <li><strong>Spending oxygen to test random ideas.</strong> Tanks should cover informed risks and unavoidable mistakes.</li>
+      <li><strong>Keeping the same risk level after losing a tank.</strong> Your strategy should become more conservative as the reserve shrinks.</li>
+      <li><strong>Ignoring recurring categories.</strong> Daily play reveals useful benches you can carry into later Unlimited runs.</li>
+      <li><strong>Letting one miss speed up the next round.</strong> Reset mentally, read the new prompt from the beginning, and return to the time plan.</li>
+    </ol>
+
+    <h2>Krillion Unlimited FAQ</h2>
+    {faq.map((item) => <><h3>{item.q}</h3><p>{item.a}</p></>)}
+  </article>
+</BaseLayout>

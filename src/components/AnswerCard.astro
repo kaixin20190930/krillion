@@ -1,0 +1,27 @@
+---
+import TierPill from './TierPill.astro';
+interface Answer { tier: string; answer: string; score: number }
+interface Prompt { text: string; hint: string; answers: Answer[] }
+interface Props { prompt: Prompt; index: number; heading?: 'h2' | 'h3'; reveal?: boolean }
+const { prompt, index, heading = 'h2', reveal = true } = Astro.props;
+const Heading = heading;
+---
+<article class="card answer-card">
+  <div class="answer-card__top">
+    <span class="prompt-num">{index + 1}</span>
+    <div><p class="card-kicker">Prompt {index + 1}</p><Heading>{prompt.text}</Heading></div>
+    <TierPill tier="krillion" short />
+  </div>
+  <p class="hint">{prompt.hint}</p>
+  {reveal ? (
+    <div class="answer-row">
+      {prompt.answers.map((answer) => (
+        <div class="answer">
+          <small>{answer.tier === 'krillion' ? 'Top pick' : answer.tier}</small>
+          <strong>{answer.answer}</strong>
+          <span class="points">{answer.score} points</span>
+        </div>
+      ))}
+    </div>
+  ) : <p class="hint"><a href="/krillion-answers-today/">Reveal today’s tiered answers</a></p>}
+</article>

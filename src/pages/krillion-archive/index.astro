@@ -1,0 +1,12 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { answerDays } from '../../data/answers';
+const title = 'Krillion Answers Archive – Daily Prompts and Answers';
+const description = 'Browse the Krillion answers archive by date, with all seven prompts and representative answers for every scoring tier.';
+---
+<BaseLayout {title} {description}>
+  <Breadcrumbs items={[{label:'Home',href:'/'},{label:'Answer archive'}]} />
+  <section class="hero"><div class="shell"><p class="eyebrow">Daily history</p><h1>Krillion Answers Archive</h1><p class="lede">Past prompts, hints, and tiered answer examples organized by dive date.</p></div></section>
+  <section class="section"><div class="shell archive-list">{answerDays.map((day)=><a class="card card-link archive-link" href={`/krillion-archive/${day.date}/`}><time datetime={day.date}>{day.displayDate}</time><div><h3>Dive #{day.dayNumber}</h3><p>{day.prompts[0].text} · {day.prompts[1].text} · and 5 more</p></div><strong>7 prompts</strong></a>)}</div></section>
+</BaseLayout>

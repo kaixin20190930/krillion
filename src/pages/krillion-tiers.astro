@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import TierPill from '../components/TierPill.astro';
+
+const title = 'Krillion Tiers and Scoring, Explained';
+const description = 'Every Krillion scoring tier explained with points, current reveal-data examples, and practical strategy for choosing safer or deeper answers.';
+const rows = [
+  { key: 'plankton', score: 10, meaning: 'The answer most players reach for first.', examples: ['Pakistan', 'Back to the Future', 'Black'] },
+  { key: 'tooclever', score: 15, meaning: 'A seemingly obscure pivot that many trivia-minded players also choose.', examples: ['the famous alternative', 'the obvious deep cut', 'the common trivia answer'] },
+  { key: 'schooler', score: 30, meaning: 'A valid less-obvious answer with dependable depth.', examples: ['Japan', '12 Angry Men', 'Aqua'] },
+  { key: 'rare', score: 60, meaning: 'An uncommon accepted answer that remains reasonably retrievable.', examples: ['Cape Verde', '¡Three Amigos!', 'Amber'] },
+  { key: 'deepcut', score: 85, meaning: 'A genuinely obscure accepted answer with strong depth.', examples: ['Czech Republic', '...All the Marbles', 'Absinthe'] },
+  { key: 'krillion', score: 100, meaning: 'The rarest top-scoring answer band in the reveal data.', examples: ['Central African Republic', 'Roundhay Garden Scene', 'Bluetiful'] },
+] as const;
+---
+<BaseLayout {title} {description}>
+  <Breadcrumbs items={[{label:'Home',href:'/'},{label:'Tiers & scoring'}]} />
+  <section class="hero"><div class="shell"><p class="eyebrow">Scoring guide</p><h1>Krillion Tiers and Scoring, Explained</h1><p class="lede">Rarity decides your score. A correct answer is only the start—the fewer players who converge on it, the deeper you sink.</p></div></section>
+  <article class="narrow prose">
+    <p class="notice"><strong>Important:</strong> tiers are prompt-specific. The named examples below come from the November 20 official reveal data, while the “Too Clever” row shows typical patterns because that response did not expose a 15-point answer. Do not treat any word as permanently locked to one tier.</p>
+    <table>
+      <thead><tr><th>Tier</th><th>Points</th><th>Three examples</th><th>What it means</th></tr></thead>
+      <tbody>{rows.map((row)=><tr><td><TierPill tier={row.key} /></td><td><strong>{row.score}</strong></td><td>{row.examples.join(' · ')}</td><td>{row.meaning}</td></tr>)}</tbody>
+    </table>
+
+    <h2>How the six Krillion tiers work</h2>
+    <h3>Plankton — 10 points</h3>
+    <p>Plankton answers are valid but highly predictable. They are often the biggest country, most famous movie, basic color, chart-topping song, or best-known award that fits the prompt. They are useful when time is nearly gone or oxygen is scarce, but relying on them every round produces a shallow total.</p>
+    <h3>Too Clever — 15 points</h3>
+    <p>Too Clever is the trap tier. The answer feels like a clever escape from the obvious choice, but many other players have learned the same escape. Think of the first alternative taught in trivia lists, the famous “obscure” example, or a meme answer that circulates widely. The November 20 reveal response did not contain a Too Clever entry, so the table describes patterns rather than inventing exact examples.</p>
+    <h3>Schooler — 30 points</h3>
+    <p>Schooler answers show solid category knowledge without reaching true rarity. They are usually recognizable, easy to spell, and safer under time pressure. In Unlimited and 1v1, a reliable Schooler can be strategically superior to a fragile Deep Cut that risks a timeout.</p>
+    <h3>Rare — 60 points</h3>
+    <p>Rare is the efficiency tier. These answers are uncommon enough to create meaningful depth but familiar enough that a prepared player can retrieve them quickly. For most players, targeting Rare across many rounds is a stronger plan than chasing a single 100-point hit.</p>
+    <h3>Deep Cut — 85 points</h3>
+    <p>Deep Cut answers come from older catalogs, regional knowledge, specialist lists, or less famous branches of a category. They often carry spelling and validity risk, so verify the exact condition before submitting. A Deep Cut is not simply a strange word; it must still be an accepted answer.</p>
+    <h3>One in a Krillion — 100 points</h3>
+    <p>This is the top scoring band. The best examples are both valid and extremely uncommon among players. Because reveal data can change and rarity depends on the prompt, a 100-point example is evidence for that dive—not a promise that the same answer will always receive 100 points.</p>
+
+    <h2>Why “Too Clever” scores only 15</h2>
+    <p>Players often make the same second move: reject the obvious answer and choose the most famous obscure alternative. When thousands of people share that instinct, the answer is no longer rare. The tier is a reminder that perceived cleverness and measured rarity are different things.</p>
+    <h2>How depth relates to points</h2>
+    <p>Each prompt awards the points attached to the accepted answer’s tier. A seven-round daily dive therefore rewards consistency: several 60-point Rare answers often beat one 100-point answer surrounded by Plankton choices. In endless play, the survival cost of a failed exotic answer matters even more.</p>
+    <h2>The best tier to target</h2>
+    <p>Start with Rare as the default goal. Move down to Schooler when the timer or spelling is uncertain, and move up to Deep Cut only when the candidate is both specific and credible. Save One in a Krillion attempts for categories where you have genuine depth rather than a vague hunch.</p>
+  </article>
+</BaseLayout>

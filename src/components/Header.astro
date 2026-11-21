@@ -1,0 +1,16 @@
+---
+import { nav, SITE } from '../lib/site';
+const path = Astro.url.pathname;
+---
+<header class="site-header">
+  <div class="shell header-row">
+    <a class="brand" href="/" aria-label={`${SITE.name} home`}>
+      <span class="brand-mark" aria-hidden="true">K</span>
+      <span>{SITE.name}</span>
+    </a>
+    <nav class="nav" aria-label="Primary navigation">
+      {nav.map((item) => <a href={item.href} aria-current={path.startsWith(item.href) ? 'page' : undefined}>{item.label}</a>)}
+    </nav>
+    <a class="button" href={SITE.officialGameUrl} target="_blank" rel="noopener noreferrer nofollow">Play official game</a>
+  </div>
+</header>

@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { SITE } from '../lib/site';
+const title = 'How to Play Krillion – Daily, Unlimited and 1v1 Rules';
+const description = 'Learn how to play Krillion: seven daily prompts, 25-second answers, rarity tiers, Unlimited mode, multiplayer rooms, and 1v1.';
+---
+<BaseLayout {title} {description}>
+  <Breadcrumbs items={[{label:'Home',href:'/'},{label:'How to play'}]} />
+  <section class="hero"><div class="shell"><p class="eyebrow">Beginner guide</p><h1>How to Play Krillion</h1><p class="lede">Name one valid thing for each prompt. Correct is good; uncommon is better.</p><div class="actions"><a class="button" href={SITE.officialGameUrl} target="_blank" rel="noopener noreferrer nofollow">Play Krillion</a><a class="button secondary" href="/krillion-answers-today/">Today’s answers</a></div></div></section>
+  <article class="narrow prose">
+    <h2>The daily dive</h2><ol><li>Open the daily game and start the dive.</li><li>Read each prompt and enter one accepted answer.</li><li>You have 25 seconds per prompt.</li><li>Your answer receives a rarity tier and points.</li><li>Complete all seven prompts to see your total depth.</li></ol>
+    <h2>How scoring works</h2><p>Common answers float near the surface. Rare answers sink deeper. Scores run from 10 points for Plankton to 100 for One in a Krillion. See the full <a href="/krillion-tiers/">tier guide</a>.</p>
+    <h2>Unlimited mode</h2><p>Unlimited removes the daily seven-round limit and turns the game into an endurance run. Read our <a href="/krillion-unlimited/">Unlimited strategy guide</a> before spending your oxygen tanks.</p>
+    <h2>Party and 1v1</h2><p>Party rooms let groups answer together, while 1v1 turns rarity knowledge into a rating contest. The prompt pool and pressure change, but uncommon valid answers remain the core skill.</p>
+  </article>
+</BaseLayout>

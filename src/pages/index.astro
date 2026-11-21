@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AnswerCard from '../components/AnswerCard.astro';
+import { latestDay as data } from '../data/answers';
+import { SITE } from '../lib/site';
+
+const title = 'Krillion Answers Today & Unlimited Guide | Krillion Tips';
+const description = 'Krillion answers sourced from the official reveal data, plus daily hints, scoring tiers, Unlimited strategy, 1v1 rules, and an answer archive.';
+const jsonLd = [
+  { '@context': 'https://schema.org', '@type': 'WebSite', name: SITE.name, url: SITE.url, description },
+  {
+    '@context': 'https://schema.org', '@type': 'VideoGame', name: 'Krillion', url: SITE.officialGameUrl,
+    gamePlatform: 'Web browser', applicationCategory: 'Game', genre: ['Trivia', 'Daily game'],
+  },
+];
+const routes = [
+  { href: '/krillion-unlimited/', kicker: 'Endless mode', title: 'Krillion Unlimited', text: 'Use three oxygen tanks wisely and choose answers that balance rarity with speed.' },
+  { href: '/krillion-hints/', kicker: 'Spoiler-light', title: 'Hints for today', text: 'Get a nudge for all seven prompts without revealing a single answer.' },
+  { href: '/krillion-tiers/', kicker: 'Scoring', title: 'Tiers explained', text: 'Understand why Plankton scores 10 while One in a Krillion scores 100.' },
+];
+---
+<BaseLayout {title} {description} {jsonLd}>
+  <section class="hero">
+    <div class="shell hero-grid">
+      <div>
+        <p class="eyebrow">Updated for Dive #{data.dayNumber} · {data.displayDate}</p>
+        <h1>Krillion Answers Today &amp; Unlimited Guide</h1>
+        <p class="lede">Seven daily prompts, tiered examples selected from Krillion’s official reveal data, and practical strategy for Daily, Unlimited, and 1v1.</p>
+        <div class="actions">
+          <a class="button" href="/krillion-answers-today/">See today’s answers</a>
+          <a class="button secondary" href="/krillion-hints/">Hints, no spoilers</a>
+        </div>
+      </div>
+      <div class="dive-gauge" aria-label="Krillion score depth guide">
+        <span class="gauge-line" aria-hidden="true"></span>
+        <div class="depth d1"><span><strong>100 pts</strong>One in a Krillion</span></div>
+        <div class="depth d2"><span><strong>85 pts</strong>Deep Cut</span></div>
+        <div class="depth d3"><span><strong>60 pts</strong>Rare</span></div>
+        <div class="depth d4"><span><strong>10–30 pts</strong>Safe answers</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell">
+      <div class="section-head">
+        <div><p class="eyebrow">Today’s first look</p><h2>Seven prompts. One smart dive.</h2></div>
+        <p>These are representative examples selected from the official reveal data—not an exhaustive answer dump. Use the top picks before the next reset.</p>
+      </div>
+      <div class="answer-list">
+        {data.prompts.slice(0, 2).map((prompt, index) => <AnswerCard {prompt} {index} heading="h3" />)}
+      </div>
+      <div class="actions"><a class="button" href="/krillion-answers-today/">View all 7 answers</a><a class="button secondary" href="/krillion-archive/">Browse archive</a></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell">
+      <div class="section-head"><div><p class="eyebrow">Build your strategy</p><h2>More than an answer list.</h2></div><p>Learn the scoring logic, pick better deep cuts, and move between modes without wasting an oxygen tank.</p></div>
+      <div class="grid">
+        {routes.map((route) => <a class="card card-link" href={route.href}><p class="card-kicker">{route.kicker}</p><h3>{route.title}</h3><p>{route.text}</p></a>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell card cta-band">
+      <div><p class="eyebrow">Ready to dive?</p><h2>Play the official game, then use our guide when you need it.</h2></div>
+      <div class="actions"><a class="button" href={SITE.officialGameUrl} target="_blank" rel="noopener noreferrer nofollow">Open Krillion</a><a class="button secondary" href="/how-to-play/">Read the rules</a></div>
+    </div>
+  </section>
+</BaseLayout>

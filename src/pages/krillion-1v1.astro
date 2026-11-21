@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+
+const title = 'Krillion 1v1 – Rules, Ratings and Seasons';
+const description = 'Krillion 1v1 rules explained: seven prompts, 15-second rounds, the 1000 starting rating, four-month seasons, rating movement, and match strategy.';
+---
+<BaseLayout {title} {description}>
+  <Breadcrumbs items={[{label:'Home',href:'/'},{label:'Krillion 1v1'}]} />
+  <section class="hero"><div class="shell"><p class="eyebrow">Head-to-head guide</p><h1>Krillion 1v1 – Rules, Ratings and Seasons</h1><p class="lede">The same rarity battle, with less time and a human opponent. Seven prompts reward consistent decisions more than one spectacular answer.</p></div></section>
+  <article class="narrow prose">
+    <div class="grid two"><div class="card"><p class="card-kicker">Match format</p><h3>7 prompts · 15 seconds</h3><p>Both players answer the same short set under a tighter timer than the daily dive.</p></div><div class="card"><p class="card-kicker">Rating baseline</p><h3>Start at 1000</h3><p>Wins and losses move your ladder rating, making repeatable Rare and Schooler answers valuable.</p></div></div>
+
+    <h2>How a Krillion 1v1 match works</h2>
+    <p>A match contains seven prompts, and each round gives you 15 seconds. Both players face the same wording, so the contest is not only about knowledge. It tests how quickly you parse conditions, retrieve a valid uncommon answer, spell it correctly, and submit before the clock closes.</p>
+    <p>Your goal is to finish the full match with more total depth than the opponent. You do not need to win every prompt. A steady sequence of Schooler and Rare answers can beat an opponent who lands one top-tier answer but times out or submits invalid guesses elsewhere.</p>
+
+    <h2>Rating changes after a match</h2>
+    <p>New players begin around a 1000 rating. A win moves the rating upward and a loss moves it downward. The exact amount can depend on the rating relationship between the two players and on the live implementation, so this guide does not publish a made-up fixed “points per win” formula. Beating a stronger opponent should matter more than repeatedly beating a much lower-rated one, but the official game remains the source of truth for the current calculation.</p>
+    <p>Because the ladder measures repeated match results, short-term swings are normal. Do not respond to one loss by chasing a 100-point answer on every prompt. The fastest way back is usually better decision quality: fewer timeouts, fewer invalid submissions, and more reliable Rare-tier retrieval.</p>
+
+    <h2>Krillion 1v1 season structure</h2>
+    <p>The competitive ladder is organized into recurring seasons rather than one permanent lifetime table. The currently documented format uses roughly four-month seasons. A season gives the ladder a clear competitive window and prevents early ratings from defining the rankings forever. Check the official game for the active season’s exact dates, reset behavior, rewards, and any rule changes.</p>
+    <p>A season reset does not erase the skills that raise a rating. Category benches, timer discipline, and spelling accuracy transfer immediately into the next ladder. Use the final weeks of a season to identify weak categories, then begin the next one with a conservative match plan.</p>
+
+    <h2>A 15-second answer plan</h2>
+    <ol>
+      <li><strong>0–3 seconds:</strong> read every condition, especially dates, letters, weights, vote thresholds, and whether a title or person is required.</li>
+      <li><strong>3–8 seconds:</strong> reject the most obvious answer and retrieve one or two credible alternatives.</li>
+      <li><strong>8–12 seconds:</strong> choose the answer with the best balance of rarity, spelling confidence, and category fit.</li>
+      <li><strong>12–15 seconds:</strong> submit. Do not abandon a valid Schooler because a vague Deep Cut appears at the last second.</li>
+    </ol>
+
+    <h2>How to win more 1v1 matches</h2>
+    <ol>
+      <li><strong>Avoid zero-value rounds.</strong> A credible Schooler is better than timing out while hunting a Deep Cut.</li>
+      <li><strong>Prepare recurring categories.</strong> Keep less-famous countries, films, songs, colors, breeds, characters, and awards ready.</li>
+      <li><strong>Prefer clean spelling.</strong> Under a 15-second timer, a slightly safer answer can outperform a punctuation-heavy title.</li>
+      <li><strong>Play the match score.</strong> If your earlier answers were strong, do not turn the final prompt into an unnecessary gamble.</li>
+      <li><strong>Reset after every prompt.</strong> You cannot repair the previous answer; use the full attention window on the next condition.</li>
+      <li><strong>Review patterns, not only losses.</strong> Track which categories create timeouts and build a three-answer bench for each one.</li>
+    </ol>
+
+    <h2>Safe answers versus high-risk answers</h2>
+    <p>Use a safe answer when the category is weak for you, the wording is narrow, or spelling confidence is low. Use a high-risk answer when you know the category deeply and can explain why the candidate is valid. The opponent cannot see your thought process, so there is no benefit in choosing an exotic answer merely to look clever.</p>
+    <p>The strongest 1v1 players are not reckless. They recognize which prompts invite depth and which prompts should be closed out cleanly. That judgment—repeated across seven rounds—is what turns knowledge into rating growth.</p>
+  </article>
+</BaseLayout>

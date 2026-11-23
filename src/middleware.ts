@@ -10,6 +10,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     const head = await env.CONTENT.prepare('SELECT MAX(updated_at) AS revision FROM dives').first<{revision: string}>();
     const key = new URL(context.url);
     key.searchParams.set('__date', date);
+    key.searchParams.set('__code', '2026-11-23-evidence');
     key.searchParams.set('__revision', head?.revision ?? 'pending');
     cacheKey = new Request(key.href);
     const hit = await edge.match(cacheKey);

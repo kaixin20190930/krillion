@@ -1,5 +1,6 @@
 ---
 import TierPill from './TierPill.astro';
+import { GENERIC_HINT, hintIsTailored } from '../lib/daily';
 interface Answer { tier: string; answer: string; score: number; aliases?: string[] }
 interface Prompt { text: string; hint: string; answers: Answer[] }
 interface Props { prompt: Prompt; index: number; heading?: 'h2' | 'h3'; reveal?: boolean }
@@ -12,7 +13,7 @@ const Heading = heading;
     <div><p class="card-kicker">Prompt {index + 1}</p><Heading>{prompt.text}</Heading></div>
     {reveal && prompt.answers.some(a => a.tier === 'krillion') && <TierPill tier="krillion" short />}
   </div>
-  <p class="hint">{prompt.hint}</p>
+  <p class="hint">{hintIsTailored(prompt.hint) ? prompt.hint : GENERIC_HINT}</p>
   {reveal ? (
     <div class="answer-row">
       {prompt.answers.map((answer) => (

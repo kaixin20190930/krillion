@@ -18,7 +18,7 @@ const jsonLd = [
 ];
 const routes = [
   { href: '/krillion-unlimited/', kicker: 'Endless mode', title: 'Krillion Unlimited', text: 'Use three oxygen tanks wisely and choose answers that balance rarity with speed.' },
-  { href: '/krillion-hints/', kicker: 'Spoiler-light', title: 'Hints for today', text: 'Get a nudge for all seven prompts without revealing a single answer.' },
+  { href: '/krillion-hints/', kicker: 'Spoiler-light', title: 'Hints and methods for today', text: 'Read the prompts and general solving methods, with prompt-specific hints when prepared.' },
   { href: '/krillion-tiers/', kicker: 'Scoring', title: 'Tiers explained', text: 'Understand why Plankton scores 10 while One in a Krillion scores 100.' },
 ];
 ---
@@ -26,7 +26,7 @@ const routes = [
   <section class="hero">
     <div class="shell hero-grid">
       <div>
-        <p class="eyebrow">Updated for Dive #{data.dayNumber} · {data.displayDate}</p>
+        <p class="eyebrow">{data.diveLabel} · {data.displayDate}</p>
         <h1>Krillion Tips: Answers, Hints, Tiers &amp; Unlimited Guide</h1>
         <p class="lede">Seven daily prompts, answer examples retrieved from Krillion’s public reveal endpoint, and practical strategy for Daily, Unlimited, and 1v1.</p>
         <div class="actions">

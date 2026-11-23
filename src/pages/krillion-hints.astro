@@ -2,22 +2,23 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import AnswerCard from '../components/AnswerCard.astro';
-import { dailyView } from '../lib/daily';
+import { dailyView, hintIsTailored } from '../lib/daily';
 import DailyStatus from '../components/DailyStatus.astro';
 export const prerender = false;
 const data = await dailyView(Astro.locals.runtime.env);
 const title = `Krillion Hints for Today – ${data.displayDate}`;
-const description = `Spoiler-free Krillion hints for all seven prompts on ${data.displayDate}, plus a simple method for turning each clue into a stronger answer.`;
+const tailoredCount = data.prompts.filter(p => hintIsTailored(p.hint)).length;
+const description = `Krillion prompts and spoiler-free general solving methods for ${data.displayDate}. Prompt-specific hints are identified separately when prepared.`;
 ---
 <BaseLayout {title} {description}>
   <Breadcrumbs items={[{label:'Home',href:'/'},{label:'Hints today'}]} />
-  <section class="hero"><div class="shell"><p class="eyebrow">Spoiler-light · Dive #{data.dayNumber}</p><h1>Krillion Hints Today – {data.displayDate}</h1><p class="lede">Start with the exact prompt and a category-fit method, without exposing the answer list. Tailored hints are added when prepared.</p><DailyStatus {data} /><div class="actions"><a class="button" href="#hints">Show hints</a><a class="button secondary" href="/krillion-answers-today/">Reveal answers instead</a></div></div></section>
+  <section class="hero"><div class="shell"><p class="eyebrow">Spoiler-light · {data.diveLabel}</p><h1>Krillion Hints Today – {data.displayDate}</h1><p class="lede">Read the exact prompts without revealing answers. Until an editor prepares a prompt-specific hint, its card shows a clearly labeled general solving method.</p><p class="notice">Prompt-specific hints prepared: {tailoredCount} of {data.prompts.length}. General methods are not tailored hints.</p><DailyStatus {data} /><div class="actions"><a class="button" href="#hints">Show hints and methods</a><a class="button secondary" href="/krillion-answers-today/">Reveal answers instead</a></div></div></section>
   <section class="section" id="hints"><div class="shell answer-list">{data.prompts.map((prompt,index)=><AnswerCard {prompt} {index} reveal={false} />)}</div></section>
   <section class="section"><div class="narrow prose">
     <h2>How to use today’s Krillion hints</h2>
     <p>Read the prompt first and produce one answer without help. Then use the hint to move sideways inside the category: a different region, an older catalog, a less-famous track, a named shade, or a specialist example. The goal is not to reveal a single magic word. It is to help you escape the answer most other players will choose.</p>
     <h2>Three steps from hint to answer</h2>
-    <ol><li><strong>List the obvious answer.</strong> This establishes the Plankton choice you are trying to improve.</li><li><strong>Apply the hint’s direction.</strong> Search one narrower branch of the category instead of scanning everything you know.</li><li><strong>Submit the best credible option.</strong> If the rare idea has uncertain spelling or category fit, use the safer answer before time expires.</li></ol>
+    <ol><li><strong>List an obvious valid answer.</strong> Familiarity does not establish its tier or score.</li><li><strong>Apply the method or prepared hint.</strong> Search one narrower branch of the category instead of scanning everything you know.</li><li><strong>Submit the best credible option.</strong> If the rare idea has uncertain spelling or category fit, use the safer answer before time expires.</li></ol>
     <h2>When to reveal the answers</h2>
     <p>Switch to the <a href="/krillion-answers-today/">answers page</a> after you have played, when studying tiers, or when a prompt has blocked you. Examples are retrieved from the game’s public reveal endpoint for this date. They are representative selections, not the complete answer database or a claim of player verification.</p>
     <h2>Why a hint cannot guarantee a tier</h2>

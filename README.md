@@ -13,7 +13,7 @@ Astro 5 + Cloudflare Workers. Evergreen guides remain static; daily pages, archi
 
 ## Date and publication rules
 
-The one current date is the civil date in `America/New_York`. Dive number is the civil-day difference from 2026-07-16, plus one. The official endpoint's date, number and reset timestamp must agree; discrepancies are quarantined and do not silently override the formula.
+The one current date is the civil date in `America/New_York`. A positive integer Dive number from the official endpoint takes priority. The civil-day difference from 2026-07-16 is only an estimate used to log exceptions, never to override an observed official number. A pending record has no Dive number. Date, reset timestamp and seven distinct prompts must validate; invalid candidates are not published.
 
 No 15-minute date offset. Preheat retains the actual current dive. At ET midnight the page changes date even if the new dataset is not ready. It displays `pending`, `prompts_ready` or `partial` as needed; it never substitutes yesterday for today. All titles, headings, metadata and visible dates use the same daily view.
 
@@ -43,23 +43,38 @@ Cloudflare cron is `* * * * *` (UTC). Most ticks only decide whether a fetch is 
 
 The 21:00 review does not mark anything player-verified. Reset schedule is supported by the official client and API; actual first-seen transitions still need observation. Two upcoming acceptance windows: **2026-11-22 and 2026-11-23 at 13:00 Beijing**, with first-publication target 13:05.
 
-Acceptance: last prior-date and first new-date observations bracket the reset, date/number match official data, the production revision is visible, no yesterday-as-today state occurs, and email is received once configured. Two real transitions cannot be claimed completed on implementation day.
+Acceptance: record last old-date source and production observations separately, first new-date source observation, first successful canonical production check, first ready check and latest content update. The source-first-seen → first-site-ok interval must be between 0 and 300 seconds. The first page can be prompt-only; answer readiness and reset-relative lateness are separate checks. Latest update is not a declaration of a final edition. Provider mail acceptance does not prove publication or inbox receipt. Two real transitions cannot be claimed completed on implementation day.
+
+### 2026-11-23 execution table (Beijing time)
+
+| Time | Action | Acceptance |
+|---|---|---|
+| Now–12:45 | Confirm deployed cron, readable logs, notification configuration and raw-response storage. Do not manually change date or Dive number. | Missing new data shows the new date with pending status and no guessed number or old answers. Old content is available only in clearly dated archives. |
+| 12:45 | Preheat; retain the actual November 22 official content. | No premature date change or invented new prompts. |
+| 12:55–13:15 | Check official data and the canonical production page every minute; retain each due check. | Save last old source/production observations, first new source observation, first site=ok and latest content update. |
+| When new data appears | Validate official date, observed number, seven prompts and answer tier/score pairs; publish valid available data. | One shared D1 record supplies daily pages; pending/prompts_ready/partial are explicit and never mix yesterday's answers with today's date. |
+| Immediately after publication | Check homepage, answers, Hints and the dated archive page. | Save successful production-check timestamps, not collection-start timestamps. Source → production ≤300 seconds meets the freshness target. |
+| 13:15 if still not ready | Save a dedicated timeout15 event and enqueue its email; continue retries. | D1 outbox contains timeout15:2026-11-23, runs/check.json retain failure evidence, and subsequent retries continue. |
+| After real new prompts appear | Export live data, prepare one non-spoiling hint per exact prompt and publish hints only. | Until edited, cards explicitly display general methods; no claim that all seven hints are tailored. |
+| 21:00 | Recheck official content and save review status. | A review is not independent player verification or a promise that upstream data will never change. |
+
+The reset page's `2026-11-23T05:00:00Z` field is the next-reset timestamp, not its datePublished. It remains unchanged. GSC is not a real-time daily-release acceptance signal; no repeated indexing requests are part of this table.
 
 ## Automatic content flow
 
 1. Fetch `https://krillion.io/api/today`; validate date, dive, reset and seven distinct prompts.
 2. Fetch `/api/reveal?date=YYYY-MM-DD`; validate exact IDs/text and tier/score consistency.
 3. Select up to three examples per actually available tier; retain aliases. Missing tiers remain absent.
-4. Save original responses and published snapshot in private R2.
+4. Save every actual today/reveal request in private R2: exact response body and URL/start/receive/status/error metadata, including unchanged content and HTTP/JSON errors. Network failures have metadata but no nonexistent response body.
 5. Atomically publish a D1 revision. Lock and content hash prevent concurrent/unchanged publications.
-6. Fetch the production answer page and confirm date, dive and revision.
-7. Queue first publish / rollover / update / missed deadline / mismatch / three failures / recovery notifications.
+6. Fetch the canonical production answer page on every due poll and confirm date, dive, revision and status. On new publication also check homepage, Hints and the dated archive. Save first site=ok / first ready site=ok independently from the legacy firstPublishedAt fetch-stage field. Article datePublished uses production evidence, not that legacy field.
+7. Queue first production success / rollover / update / missed deadline / dedicated 15-minute timeout / mismatch / three failures / recovery notifications. The first-success email includes source-first-seen, production-first-check, elapsed seconds and current readiness status.
 
-A later failure retains an existing correct same-day record. Invalid candidates are quarantined. Retries occur on later ticks, without blocking sleeps. R2 stores the complete raw answer response; the page is deliberately not an exhaustive database.
+A later failure retains an existing correct same-day record. Invalid candidates are quarantined. Retries continue after fifteen minutes on later ticks, without blocking sleeps. R2 `polls/YYYY-MM-DD/<startedAt>/` stores `today.json`, `today.meta.json`, `reveal.json`/metadata when requested, `processed.json` for normalized content and `check.json` for outcome/page checks. On failures before normalization there is no processed candidate to fabricate. `dives/.../revision-N/` remains the immutable revision-level evidence. `reconcile/.../saved-prompts.json` is explicitly saved history, not an original today response. The page is deliberately not an exhaustive database.
 
 ## Daily editorial hints
 
-Use Node 22. Official prompts and answer examples are automatic; tailored hints can be edited without touching scoring or rebuilding.
+Use Node 22. Official prompts and answer examples are automatic; tailored hints are editorial work and can be edited without touching scoring or rebuilding. General methods are labeled as such; the Hints page counts prepared hints and its metadata does not promise seven tailored clues. Never guess future prompts. Only actual in-game checks could establish player verification; the hint publisher cannot change that flag.
 
 ```bash
 npm run content:export -- 2026-11-21
@@ -122,7 +137,7 @@ In the Cloudflare dashboard:
 - Compute → Workers and Pages → `krillion-sync` → Settings / Cron Triggers: see the deployed schedule. Observability: see invocations and failures.
 - Storage and Databases → D1 → `krillion-content` → Console: query `runs` for collection outcomes, `observations` for actual reset transitions, `outbox` for notification attempts/receipts, and `revisions` for published content history.
 - Compute → Email Service → Email Sending → `krillion.tips` → Activity log: inspect provider delivery events.
-- `/when-does-krillion-reset/`: public countdown and recorded reset observations, not private operational logs.
+- `/when-does-krillion-reset/`: public countdown, old/new source observations, old/first/first-ready production checks, latest content update and source-to-production elapsed seconds in Beijing time. Private full logs remain in D1/R2.
 
 Emails report significant changes and failures; they are not the complete execution log. Unchanged hourly checks do not generate mail. Missing mail alone cannot prove the scheduler is healthy; check Worker/D1 logs separately.
 

@@ -1,10 +1,11 @@
 export interface AnswerExample { tier: string; answer: string; score: number; aliases?: string[] }
 export interface Prompt { id: string; text: string; hint: string; answers: AnswerExample[] }
 export interface Dive {
-  date: string; dive: number; resetsAt: string;
+  date: string; dive: number | null; resetsAt: string;
   status: 'pending' | 'prompts_ready' | 'partial' | 'ready';
   prompts: Prompt[]; source: string; fetchedAt: string; lastCheckedAt: string;
   firstPublishedAt: string; updatedAt: string; revision: number; contentHash: string;
+  firstSiteVerifiedAt?: string; firstReadySiteVerifiedAt?: string;
   sourceHash?: string;
   verification: { endpointConsistent: boolean; playerVerified: boolean };
 }
@@ -17,6 +18,9 @@ export interface Statement {
 export interface Database { prepare(sql: string): Statement; batch(statements: Statement[]): Promise<unknown> }
 export interface SiteEnv { CONTENT: Database }
 export const TIER_SCORES: Record<string, number> = { krillion: 100, deepcut: 85, rare: 60, schooler: 30, tooclever: 15, plankton: 10 };
+export const GENERIC_HINT = 'General method (not a tailored hint): check every restriction in the prompt, then consider a less familiar example in the same category.';
+export const hintIsTailored = (hint: string) => Boolean(hint.trim()) && ![GENERIC_HINT, 'Start with one example you know fits every word of the prompt. Then look for a less obvious example in the same category.', 'Hints are being prepared. First check every restriction in the prompt.'].includes(hint);
+export const diveLabel = (dive: number | null) => dive === null ? 'Dive number awaiting official data' : `Dive #${dive}`;
 const dayMs = 86_400_000;
 export function civilTime(date: string) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error('Invalid civil date');
@@ -43,11 +47,11 @@ export function resetAt(date: string) {
   return new Date(guess).toISOString();
 }
 export function pendingDive(date: string): Dive {
-  return { date, dive: diveNumber(date), resetsAt: resetAt(date), status: 'pending', prompts: [], source: '', fetchedAt: '', lastCheckedAt: '', firstPublishedAt: '', updatedAt: '', revision: 0, contentHash: '', verification: { endpointConsistent: false, playerVerified: false } };
+  return { date, dive: null, resetsAt: resetAt(date), status: 'pending', prompts: [], source: '', fetchedAt: '', lastCheckedAt: '', firstPublishedAt: '', updatedAt: '', revision: 0, contentHash: '', verification: { endpointConsistent: false, playerVerified: false } };
 }
 export async function getDive(env: SiteEnv, date: string): Promise<Dive | null> {
-  const row = await env.CONTENT.prepare('SELECT payload, last_checked_at FROM dives WHERE date=?').bind(date).first<{payload: string; last_checked_at: string}>();
-  return row ? { ...JSON.parse(row.payload), lastCheckedAt: row.last_checked_at } : null;
+  const row = await env.CONTENT.prepare('SELECT d.payload,d.last_checked_at,o.first_site_ok,o.first_ready_site_ok FROM dives d LEFT JOIN observations o ON o.date=d.date WHERE d.date=?').bind(date).first<{payload: string; last_checked_at: string; first_site_ok: string | null; first_ready_site_ok: string | null}>();
+  return row ? { ...JSON.parse(row.payload), lastCheckedAt: row.last_checked_at, firstSiteVerifiedAt: row.first_site_ok ?? undefined, firstReadySiteVerifiedAt: row.first_ready_site_ok ?? undefined } : null;
 }
 export async function listDives(env: SiteEnv): Promise<Dive[]> {
   const { results } = await env.CONTENT.prepare('SELECT payload FROM dives ORDER BY date DESC').all<{payload: string}>();
@@ -56,7 +60,7 @@ export async function listDives(env: SiteEnv): Promise<Dive[]> {
 export async function dailyView(env: SiteEnv, now = new Date()) {
   const date = etDate(now);
   const data = await getDive(env, date) ?? pendingDive(date);
-  return { ...data, displayDate: displayDate(date), dayNumber: diveNumber(date) };
+  return { ...data, displayDate: displayDate(date), dayNumber: data.dive, diveLabel: diveLabel(data.dive) };
 }
 export function statusText(status: Dive['status']) {
   return { pending: 'Today’s dive is awaiting live data. No yesterday answers are shown as today.', prompts_ready: 'Today’s prompts are ready; answer examples are being collected.', partial: 'Some answer examples are ready. More will be added as the reveal data becomes available.', ready: 'Examples retrieved from Krillion’s public reveal endpoint. Not independently player-verified.' }[status];

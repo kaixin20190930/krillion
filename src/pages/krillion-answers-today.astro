@@ -8,17 +8,17 @@ import { SITE } from '../lib/site';
 export const prerender = false;
 const data = await dailyView(Astro.locals.runtime.env);
 
-const title = `Krillion Answers Today – ${data.displayDate} · Dive #${data.dayNumber}`;
-const description = `Krillion daily prompts and available answer examples for ${data.displayDate}, Dive #${data.dayNumber}. Current status: ${data.status.replaceAll('_', ' ')}. Independent, unofficial guide.`;
+const title = `Krillion Answers Today – ${data.displayDate} · ${data.diveLabel}`;
+const description = `Krillion daily prompts and available answer examples for ${data.displayDate}, ${data.diveLabel}. Current status: ${data.status.replaceAll('_', ' ')}. Independent, unofficial guide.`;
 const faq = [
-  { q: 'What are the Krillion answers today?', a: `This page covers ${data.displayDate}, Dive #${data.dayNumber}. Status: ${data.status.replaceAll('_', ' ')}. Available examples are retrieved from the game’s public reveal endpoint, not independently player-verified.` },
+  { q: 'What are the Krillion answers today?', a: `This page covers ${data.displayDate}, ${data.diveLabel}. Status: ${data.status.replaceAll('_', ' ')}. Available examples are retrieved from the game’s public reveal endpoint, not independently player-verified.` },
   { q: 'When does Krillion reset?', a: 'The daily dive currently resets at midnight Eastern Time, which is 05:00 UTC during standard time.' },
   { q: 'How many Krillion prompts are there each day?', a: 'The daily game has seven prompts.' },
   { q: 'What is the highest Krillion tier?', a: 'One in a Krillion is the top tier and scores 100 points.' },
   { q: 'Are these every accepted answer?', a: 'No. This independent guide selects up to three examples per available scoring tier from the public reveal response, rather than reproducing the entire answer database.' },
 ];
 const jsonLd = [
-  { '@context': 'https://schema.org', '@type': 'Article', headline: title, description, ...(data.firstPublishedAt ? { datePublished: data.firstPublishedAt, dateModified: data.updatedAt } : {}), mainEntityOfPage: `${SITE.url}/krillion-answers-today/`, author: { '@type': 'Organization', name: SITE.name }, publisher: { '@type': 'Organization', name: SITE.name } },
+  { '@context': 'https://schema.org', '@type': 'Article', headline: title, description, ...(data.firstSiteVerifiedAt ? { datePublished: data.firstSiteVerifiedAt } : {}), ...(data.updatedAt ? { dateModified: data.updatedAt } : {}), mainEntityOfPage: `${SITE.url}/krillion-answers-today/`, author: { '@type': 'Organization', name: SITE.name }, publisher: { '@type': 'Organization', name: SITE.name } },
   { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faq.map((item) => ({ '@type': 'Question', name: item.q, acceptedAnswer: { '@type': 'Answer', text: item.a } })) },
 ];
 ---
@@ -26,7 +26,7 @@ const jsonLd = [
   <Breadcrumbs items={[{label:'Home', href:'/'},{label:'Answers today'}]} />
   <section class="hero">
     <div class="shell">
-      <p class="eyebrow">Independent daily guide · Dive #{data.dayNumber} · {data.displayDate}</p>
+      <p class="eyebrow">Independent daily guide · {data.diveLabel} · {data.displayDate}</p>
       <h1>Krillion Answers Today – {data.displayDate}</h1>
       <p class="lede">Today’s exact prompts and available tiered examples. Answers are retrieved from the public game endpoint; this page does not claim independent player verification.</p>
       <div class="actions"><a class="button" href={SITE.officialGameUrl} target="_blank" rel="noopener noreferrer nofollow">Play today’s dive</a><a class="button secondary" href="/krillion-hints/">Switch to hints</a></div>

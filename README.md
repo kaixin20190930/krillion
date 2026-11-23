@@ -45,6 +45,8 @@ The 21:00 review does not mark anything player-verified. Reset schedule is suppo
 
 Acceptance: record last old-date source and production observations separately, first new-date source observation, first successful canonical production check, first ready check and latest content update. The source-first-seen → first-site-ok interval must be between 0 and 300 seconds. The first page can be prompt-only; answer readiness and reset-relative lateness are separate checks. Latest update is not a declaration of a final edition. Provider mail acceptance does not prove publication or inbox receipt. Two real transitions cannot be claimed completed on implementation day.
 
+Legacy unchanged runs reused an earlier successful page check. Migration backfill uses first successful records conservatively, but last/prior production observations use only legacy published runs or new raw-linked checks that actually fetched production. Missing observations stay missing; they are not reconstructed from fetch timestamps.
+
 ### 2026-11-23 execution table (Beijing time)
 
 | Time | Action | Acceptance |
